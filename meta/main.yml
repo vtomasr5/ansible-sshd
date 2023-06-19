@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  author: Matt Willsher
-  description: OpenSSH SSH daemon configuration
-  company: Willsher Systems
+  author: Vicenç Juan Tomàs Monserrat
+  description: OpenSSH SSH daemon configuration (forked from willshersystems/ansible-sshd)
+  company: Close
   license: LGPLv3
   min_ansible_version: 2.9
   platforms:
@@ -20,6 +20,7 @@ galaxy_info:
         - xenial
         - bionic
         - focal
+        - jammy
     - name: FreeBSD
       version:
         - 10.1
