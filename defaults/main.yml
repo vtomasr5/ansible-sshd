@@ -65,6 +65,10 @@ sshd_hostkey_owner: "{{ __sshd_hostkey_owner }}"
 sshd_hostkey_group: "{{ __sshd_hostkey_group }}"
 sshd_hostkey_mode: "{{ __sshd_hostkey_mode }}"
 
+sshd_clientkey_owner: "{{ __sshd_clientkey_owner }}"
+sshd_clientkey_group: "{{ __sshd_clientkey_group }}"
+sshd_clientkey_mode: "{{ __sshd_clientkey_mode }}"
+
 # instead of replacing the whole configuration file, just add a specified
 # snippet
 sshd_config_namespace: null
