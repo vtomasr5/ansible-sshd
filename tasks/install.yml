@@ -22,6 +22,12 @@
     - __sshd_sysconfig_supports_use_strong_rng or __sshd_sysconfig_supports_crypto_policy
   notify: reload_sshd
 
+- name: Set SSH Signing variables
+  set_fact:
+    sshd_TrustedUserCAKeys: "{{ __sshd_trustedUserCAKeys }}"
+    sshd_HostCertificate: "{{ __sshd_hostCertificate }}"
+  when: sshd_vault_signing_keys | d(false) | bool
+
 - name: Make sure hostkeys are available and have expected permissions
   vars: &share_vars
     # This mimics the macro body_option() in sshd_config.j2

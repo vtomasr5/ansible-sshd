@@ -84,7 +84,7 @@ __sshd_runtime_directory_mode: "0755"
 
 # If sshd_vault_signing_keys is true, the role will also install client key and host key signed by Vault into the target host
 sshd_vault_signing_keys: false
-sshd_TrustedUserCAKeys: /etc/ssh/trusted-user-vault-signed-ca-keys.pem
-sshd_HostCertificate: /etc/ssh/ssh_host_ed25519_key-cert.pub
+__sshd_trustedUserCAKeys: /etc/ssh/trusted-user-vault-signed-ca-keys.pem
+__sshd_hostCertificate: /etc/ssh/ssh_host_ed25519_key-cert.pub
 # The host key and the host certificate must use the same key type (i.e. rsa, ed25519, dsa or ecdsa)
 sshd_host_key_path: /etc/ssh/ssh_host_ed25519_key.pub

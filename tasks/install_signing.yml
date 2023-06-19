@@ -46,5 +46,5 @@
       - ansible_virtualization_type|default(None) != 'containerd'
       - ansible_virtualization_type|default(None) != 'VirtualPC'  # for Github Actions
       - ansible_connection != 'chroot'
-  notify: reload_sshd
+    notify: reload_sshd
   when: sshd_vault_signing_keys | d(false) | bool
