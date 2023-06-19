@@ -1,0 +1,50 @@
+---
+- name: Install client key and host key signed by Vault
+  block:
+  - name: Make sure Vault signed client key is available and have expected permissions
+    get_url:
+      url: "{{ vault_addr }}/v1/ssh/{{ service_level }}/public_key"
+      dest: "{{ sshd_TrustedUserCAKeys }}"
+      mode: "{{ sshd_clientkey_mode }}"
+      owner: "{{ sshd_clientkey_owner }}"
+      group: "{{ sshd_clientkey_group }}"
+
+  - name: Create the signhostssh script directory
+    file:
+      path: "/opt/bin"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+
+  - name: Create the signhostssh service file
+    template:
+      src: "signhostssh.sh.j2"
+      dest: "/opt/bin/signhostssh.sh"
+      owner: "root"
+      group: "root"
+      mode: "0700"
+
+  - name: Install signhostssh service unit file
+    template:
+      src: "signhostssh.service.j2"
+      dest: "/etc/systemd/system/signhostssh.service"
+      owner: root
+      group: root
+      mode: "0644"
+
+  - name: Service signhostssh enabled and running
+    systemd:
+      name: signhostssh
+      enabled: true
+      state: started
+      daemon_reload: yes
+    when:
+      - sshd_manage_service|bool
+      - ansible_virtualization_type|default(None) != 'docker'
+      - ansible_virtualization_type|default(None) != 'podman'
+      - ansible_virtualization_type|default(None) != 'containerd'
+      - ansible_virtualization_type|default(None) != 'VirtualPC'  # for Github Actions
+      - ansible_connection != 'chroot'
+  notify: reload_sshd
+  when: sshd_vault_signing_keys | d(false) | bool

@@ -1,0 +1,14 @@
+---
+__sshd_service: ssh
+__sshd_packages:
+  - openssh-server
+  - openssh-sftp-server
+__sshd_config_mode: "0644"
+# the defaults here represent the defaults shipped in the main sshd_config
+__sshd_defaults:
+  KbdInteractiveAuthentication: false
+  UsePAM: true
+  AcceptEnv: LANG LC_*
+  Subsystem: "sftp  /usr/lib/openssh/sftp-server"
+__sshd_os_supported: true
+__sshd_runtime_directory: /run/sshd

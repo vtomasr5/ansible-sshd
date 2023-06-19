@@ -1,0 +1,13 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Sign host public key with Vault
+ConditionPathExists=!{{ sshd_HostCertificate }}
+After=sshd-keygen.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/bin/signhostssh.sh
+
+[Install]
+WantedBy=multi-user.target

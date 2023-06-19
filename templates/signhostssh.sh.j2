@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+# Gather EC2 instance token
+imds_token=$( curl -Ss -H "X-aws-ec2-metadata-token-ttl-seconds: 60" -XPUT 169.254.169.254/latest/api/token )
+
+VAULT_ADDR="{{ vault_addr }}"
+SERVICE_LEVEL="{{ service_level }}"
+pkcs7_signature=$(curl -s -H "X-aws-ec2-metadata-token: $imds_token" http://169.254.169.254/latest/dynamic/instance-identity/rsa2048 | tr -d '\n')
+
+data=$(cat <<EOT
+{
+  "role": "ec2-node",
+  "pkcs7": "$pkcs7_signature",
+  "nonce": "4a0009d8-2320-a690-e2d2-31229519fa42"
+}
+EOT
+)
+
+auth_resp=$(curl --fail -s -X POST -d "$data" "$VAULT_ADDR/v1/auth/aws/login")
+VAULT_TOKEN=$(echo $auth_resp | jq -r .auth.client_token)
+
+resp=$(curl --fail -s -X POST "$VAULT_ADDR/v1/ssh/$SERVICE_LEVEL/sign/host" \
+            -H "X-VAULT-TOKEN: $VAULT_TOKEN" \
+            -d "{\"cert_type\": \"host\", \"public_key\": \"$(cat {{ sshd_host_key_path }})\"}")
+echo $resp | jq -r .data.signed_key > {{ sshd_HostCertificate }}
+chmod 640 {{ sshd_HostCertificate }}
